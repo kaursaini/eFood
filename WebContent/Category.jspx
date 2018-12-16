@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" version="2.0">
+	<jsp:directive.page contentType="text/html; charset=UTF-8"
+		pageEncoding="UTF-8" session="false" />
+	<jsp:output doctype-root-element="html"
+		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+		omit-xml-declaration="true" />
+	<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8" />
+</head>
+<body>
+
+	<jsp:include page="Header.jspx" />
+
+	<c:if test="${!empty result}">
+		<c:forEach var="e" items="${result}">
+			<form method="get" action="Catalog" role="form">
+				${e.name} ${e.description} <input type="submit" value="Browse" /> <input
+					type="hidden" name="categoryName" value="${e.name}" /> <input
+					type="hidden" name="categoryID" value="${e.id}" />
+			</form>
+
+			<br />
+
+		</c:forEach>
+	</c:if>
+
+	<c:if test="${!empty error}">
+		<h4 style="color: red;" class="text-center">${error}</h4>
+	</c:if>
+
+</body>
+	</html>
+</jsp:root>
