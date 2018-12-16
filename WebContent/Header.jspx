@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+		  xmlns:c="http://java.sun.com/jsp/jstl/core"
+		  xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+		  version="2.0">
+	<jsp:directive.page contentType="text/html; charset=UTF-8"
+		pageEncoding="UTF-8" session="false" />
+	<jsp:output doctype-root-element="html"
+		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+		omit-xml-declaration="true" />
+	<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Foods R Us</title>
+</head>
+<body>
+
+	<a href="Index">Foods R Us</a>
+
+	<form method="get" action="Catalog" role="form">
+		<input type="text" name="searchKeyword"
+			placeholder="Enter item ID or name..." /> <input type="submit"
+			value="Search" />
+	</form>
+
+	<form method="post" action="Cart" role="form">
+		<input value="Cart" name="cart" type="submit" /> <input
+			value="${cartData}" name="cartData" type="hidden" />
+	</form>
+
+	<form method="post" action="Checkout" role="form">
+		<input value="Check Out" name="checkout" type="submit" />
+	</form>
+	
+	<!-- not part of requirement, do if time
+	<form method="post" action="Login" role="form">
+		<input value="Login" name="login" type="submit" />
+	</form>
+	
+	<c:if test="${loggedIn == true}">
+		Logout
+	</c:if>
+	<c:if test="${empty loggedIn or loggedIn == false}">
+		<a href="Login">Login</a>
+	</c:if>
+	-->
+
+</body>
+	</html>
+</jsp:root>
