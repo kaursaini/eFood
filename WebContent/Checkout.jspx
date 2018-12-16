@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" version="2.0">
+	<jsp:directive.page contentType="text/html; charset=UTF-8"
+		pageEncoding="UTF-8" session="true" />
+	<jsp:output doctype-root-element="html"
+		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+		omit-xml-declaration="true" />
+	<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Foods R US</title>
+</head>
+<body>
+
+	<jsp:include page="Header.jspx" />
+
+	<hr size="1px" />
+	<br />
+	<form method="POST">
+		<table width="800px" cellpadding="0" cellspacing="10"
+			class="mainTextStyle" align="center">
+			<tr>
+				<td><strong>Name</strong></td>
+				<td><strong>Quantity</strong></td>
+				<td><strong>Total for Product</strong></td>
+			</tr>
+			<c:if test="${!empty result}">
+				<c:forEach var="e" items="${result.items.itemList}">
+					<tr>
+						<td style="padding: 6px">${e.name}</td>
+						<td style="padding: 6px">${e.quantity}</td>
+						<td style="padding: 6px"><fmt:setLocale value="en_US" /> <fmt:formatNumber
+								type="currency" value="${e.price * e.quantity}" /></td>
+					</tr>
+				</c:forEach>
+			</c:if>
+			<c:if test="${!empty error}">
+				<td align="center" colspan="6" style="color: red;"><i>${error}</i></td>
+			</c:if>
+			<!--
+			<c:if test="${empty result}">
+				<td align="center" colspan="3"><i>Your shopping cart is empty! Nothing to checkout</i></td>
+			</c:if>
+			-->
+		</table>
+	</form>
+	<hr size="1px" />
+	<table cellpadding="0" cellspacing="2" class="mainTextStyle">
+		<tr>
+			<td><u>Price calculation:</u><br /></td>
+		</tr>
+		<tr>
+			<td><strong>Sub Total:</strong></td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.subtotal}" type="currency" /></td>
+		</tr>
+		<tr>
+			<td><strong>HST:</strong></td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.hst}" type="currency" /></td>
+		</tr>
+		<tr>
+			<td><strong>Shipping Cost:</strong></td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.shipping}" type="currency" /></td>
+		</tr>
+		<tr>
+			<td colspan="2"><hr size="1px" width="100%" /></td>
+		</tr>
+		<tr>
+			<td><strong>Total:</strong></td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.grandTotal}" type="currency" /></td>
+		</tr>
+	</table>
+	<hr size="1px" />
+	<br />
+	<div align="center">
+		<form action="Checkout" method="POST">
+			<input value="Confirm Order" name="confirm" type="submit"/>
+	    	<input value="Continue Shopping" onclick="location='${returnURL}'" type="button"/>
+	    	<input value="Cancel Order" name="cancel" type="submit"/></form>
+	</div>
+
+</body>
+	</html>
+</jsp:root>
