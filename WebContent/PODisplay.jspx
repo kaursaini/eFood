@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" 
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt" version="2.0">
+	<jsp:directive.page contentType="text/html; charset=UTF-8" 
+		pageEncoding="UTF-8" session="false"/>
+	<jsp:output doctype-root-element="html"
+		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+		omit-xml-declaration="true" />
+	<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Foods R US</title>
+</head>
+<body>
+
+<c:if test="${!empty result}">
+	<h1>Details of Order:</h1> 
+	Account number: ${result.customer.account}
+	<br /> 
+	Order number: ${result.id}
+	<br /> 
+	Order date: ${result.submitted}
+				
+	<h2>Your order items:</h2>
+	<table border="1">
+		<tr>
+			<td>Product ID</td>
+			<td>Name</td>
+			<td>Price</td>
+			<td>Quantity</td>
+			<td>Extended</td>
+		</tr>
+		
+		<c:forEach var="e" items="${result.items.itemList}">
+		<tr>
+			<td style="padding: 6px">${e.number}</td>
+			<td style="padding: 6px">${e.name}</td>
+			<td style="padding: 6px">${e.price}</td>
+			<td style="padding: 6px">${e.quantity}</td>
+			<td style="padding: 6px"><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					type="currency" value="${e.price * e.quantity}" /></td>
+		</tr>
+		</c:forEach>
+	</table>
+
+	<br/>
+	<table>
+		<tr>
+			<td>Sub Total:</td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.subtotal}" type="currency" /></td>
+		</tr>
+		<tr>
+			<td>HST:</td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.hst}" type="currency" /></td>
+		</tr>
+		<tr>
+			<td>Shipping Cost:</td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.shipping}" type="currency" /></td>
+		</tr>
+		<tr>
+			<td colspan="2"><hr size="1px" width="100%" /></td>
+		</tr>
+		<tr>
+			<td>Total:</td>
+			<td><fmt:setLocale value="en_US" /> <fmt:formatNumber
+					value="${result.grandTotal}" type="currency" /></td>
+		</tr>
+	</table>
+</c:if>
+<c:if test="${!empty error}">
+	<p style="color: red;"><i>${error}</i></p>
+</c:if>
+
+<br/>
+Back to <a href="Index">Foods R Us</a>
+
+</body>
+</html>
+</jsp:root>
