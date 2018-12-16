@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jsp:root 
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" version="2.0">
+	<jsp:directive.page contentType="text/html; charset=UTF-8" 
+		pageEncoding="UTF-8" session="false"/>
+	<jsp:output doctype-root-element="html"
+		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+		omit-xml-declaration="true" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Foods R Us - Catalog</title>
+</head>
+<body>
+
+<jsp:include page="Header.jspx"/>  
+
+<a href="Catalog">Browse Food Categories</a>
+
+<h3>
+<c:choose>
+	<c:when test="${!empty categoryName}">
+		Category: ${categoryName}
+	</c:when>
+	<c:when test="${!empty searchKeyword}">
+		Results for "${searchKeyword}"
+	</c:when>
+	<c:when test="${searchKeyword ne null}">
+		All Items
+	</c:when>
+</c:choose>
+</h3>
+
+<c:if test="${!empty result}">
+<!-- There are items to display -->
+<!-- ========================== -->
+	<!-- Sort -->
+	<!--~~~~~~-->
+	<c:set var="numberValue" value="number"/>
+	<c:set var="nameAZValue" value="name-asc"/>
+	<c:set var="nameZAValue" value="name-desc"/>
+	<c:set var="priceLowHighValue" value="price-asc"/>
+	<c:set var="priceHighLowValue" value="price-desc"/>
+	
+	<c:set var="noneText" value="Sort By..."/>
+	<c:set var="numberText" value="ID"/>
+	<c:set var="nameAZText" value="Name: A to Z"/>
+	<c:set var="nameZAText" value="Name: Z to A"/>
+	<c:set var="priceLowHighText" value="Price: Low to High"/>
+	<c:set var="priceHighLowText" value="Price: High to Low"/>
+
+	<form method="get" action="Catalog" role="form">			
+		<select id="sortBy" name="sortBy" onchange="this.form.submit()">
+			<option selected="selected">${noneText}</option>
+			<option value="${numberValue}">${numberText}</option>	
+			<option value="${nameAZValue}">${nameAZText}</option>				
+			<option value="${nameZAValue}">${nameZAText}</option>			
+			<option value="${priceLowHighValue}">${priceLowHighText}</option>				
+			<option value="${priceHighLowValue}">${priceHighLowText}</option>			
+		</select>	
+		
+		<c:forEach items="${param}" var="p">
+			<c:if test="${p.key ne 'sortBy' and p.key ne 'searchKeyword' and p.key ne 'page'}">
+			<!-- omit sortBy, searchKeyword, and page (start at first) -->
+				<c:if test="${!empty p.value}">
+        			<input type="hidden" name="${p.key}" value="${p.value}"/>
+        		</c:if>
+        	</c:if>  
+		</c:forEach>
+
+		<c:if test="${searchKeyword ne null}">
+		<!-- allow empty string -->
+			<input type="hidden" name="searchKeyword" value="${searchKeyword}"/>
+		</c:if>
+		
+		<noscript><input type="submit" value="Sort"/></noscript>
+	</form>
+	
+	<c:if test="${!empty sortBy}">
+		<b>Sorted By </b> 
+		<c:if test="${sortBy eq numberValue}">${numberText}</c:if>
+		<c:if test="${sortBy eq nameAZValue}">${nameAZText}</c:if>
+		<c:if test="${sortBy eq nameZAValue}">${nameZAText}</c:if>
+		<c:if test="${sortBy eq priceLowHighValue}">${priceLowHighText}</c:if>
+		<c:if test="${sortBy eq priceHighLowValue}">${priceHighLowText}</c:if>
+		
+		<br/>
+		
+	</c:if>
+	
+	<br/>
+
+	<!-- Number of items per page -->
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	Number of Items per Page: 
+	<form method="get" action="Catalog" role="form">			
+		<select id="numOfItemsPerPage" name="numOfItemsPerPage" onchange="this.form.submit()">
+			<option selected="selected">${numOfItemsPerPage}</option>
+			<c:forEach begin="5" end="20" step="5" var="i">
+				<c:if test="${i ne numOfItemsPerPage}">
+					<option value="${i}">${i}</option>	
+	        	</c:if>  	
+			</c:forEach>
+		</select>	
+		
+		<c:forEach items="${param}" var="p">
+			<c:if test="${p.key ne 'numOfItemsPerPage' and p.key ne 'searchKeyword' and p.key ne 'page'}">
+			<!-- omit numOfItemsPerPage, searchKeyword, and page (start at first) -->
+				<c:if test="${!empty p.value}">
+        			<input type="hidden" name="${p.key}" value="${p.value}"/>
+        		</c:if>
+        	</c:if>  
+		</c:forEach>
+
+		<c:if test="${searchKeyword ne null}">
+		<!-- allow empty string -->
+			<input type="hidden" name="searchKeyword" value="${searchKeyword}"/>
+		</c:if>
+		
+		<noscript><input type="submit" value="Refresh"/></noscript>
+	</form>
+
+	<!-- Display items -->
+	<!--~~~~~~~~~~~~~~~-->
+	<c:set var="numOfItemsDisplayed" value="${fn:length(result)}"/>
+	<c:set var="numOfItems" value="${numOfItems}"/>
+	
+	<c:set var="nop" value="${numOfItems div numOfItemsPerPage}"/>
+	<c:set var="decimalRemainder" value="${(1 - (nop mod 1)) mod 1}"/>
+	<c:set var="numOfPages" value="${nop + decimalRemainder}"/>
+
+	<c:set var="beginIndex" value="${(onPageNum-1) * numOfItemsPerPage}"/>
+
+	<c:choose>
+		<!-- NOTE: beginIndex starts at 0 -->
+		<c:when test="${numOfItemsDisplayed == 1}">
+			Showing result ${beginIndex + 1} of ${numOfItems} 
+		</c:when>
+		<c:otherwise>
+			Showing results ${beginIndex + 1} - ${beginIndex + numOfItemsDisplayed} of ${numOfItems} 
+		</c:otherwise>
+	</c:choose>
+	
+	<hr size="1px"/>
+
+	<c:forEach var="e" items="${result}">
+		<form method="post" action="Cart" role="form">
+			<b>${e.name}</b>
+			<br/>ID: ${e.number}
+			<br/>Quantity per Unit: ${e.unit}
+			<br/>Price: $<fmt:formatNumber value="${e.price}" pattern="0.00"/>
+			<br/> 
+			Quantity: 
+			<input type="text" size="3" name="quantity" value="1"/>
+			<input type="submit" name="addToCart" value="Add to Cart"/>
+			
+			<!-- item to add to card-->
+			<input type="hidden" name="itemID" value="${e.number}"/>
+			<input type="hidden" name="returnURL" value="Catalog?${pageContext.request.queryString}"/>
+		</form>
+
+		<hr size="1px"/>
+		
+	</c:forEach>
+	
+	<!-- Pages -->
+	<!--~~~~~~~-->
+   	<c:if test="${numOfPages gt 1}">
+   	
+   		<c:url var="pagelessURL" value="Catalog"> 
+			<c:forEach items="${param}" var="p">
+				<c:if test="${p.key ne 'page'}">
+        			<c:param name="${p.key}" value="${p.value}"/>
+        		</c:if>  
+			</c:forEach>
+		</c:url>
+		
+		<c:set var="prevPageText" value="Prev"/>
+		<c:set var="nextPageText" value="Next"/>
+
+		<c:if test="${onPageNum == 1}">${prevPageText}</c:if>
+		<c:if test="${onPageNum != 1}">
+			<a href="${pagelessURL}&amp;page=${onPageNum-1}">${prevPageText}</a>
+		</c:if>
+   		<c:out value=" "/>
+   		
+   		<c:forEach begin="1" end="${numOfPages}" var="i">
+   			<c:if test="${onPageNum == i}">${i}</c:if>
+   			<c:if test="${onPageNum != i}">
+   				<a href="${pagelessURL}&amp;page=${i}">${i}</a>
+   			</c:if>
+	   		<c:out value=" "/>
+	   	</c:forEach>	
+	   	
+	   	<c:if test="${onPageNum == numOfPages}">${nextPageText}</c:if>
+		<c:if test="${onPageNum != numOfPages}">
+			<a href="${pagelessURL}&amp;page=${onPageNum+1}">${nextPageText}</a>
+		</c:if>
+	</c:if>
+</c:if>
+
+<c:if test="${empty result}">
+<!-- There are NO items to display -->
+<!-- ============================= -->
+	No items to display.
+</c:if>
+
+<c:if test="${!empty error}">
+	<h4 style="color: red;" class="text-center">${error}</h4>
+</c:if>
+
+</body>
+</html>
+</jsp:root>
